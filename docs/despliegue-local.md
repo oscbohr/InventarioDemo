@@ -147,8 +147,14 @@ curl -X POST http://localhost:8080/api/articulos -H "Content-Type: application/j
 Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/articulos -ContentType "application/json" `
   -Body '{"nombre":"Laptop Dell","serial":"SN-0001","fechaCompra":"2024-03-01","valorCompra":3500.00}'
 ```
-
 Luego consulta `GET /api/articulos/1/depreciaciones`.
+
+Postman:
+```Postman
+Desde Postman importe la colección que esta ubicada en  "/postman/ArticuloController.postman_collection.json"
+   (Viene preconfigurada con endpoints, ejemplos de response y variables de entorno)
+```
+
 
 ## 6. Detener
 
