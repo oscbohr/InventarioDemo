@@ -14,6 +14,10 @@ API REST para gestionar activos (artículos) de un inventario y calcular su depr
 
 Diagramas del proyecto (arquitectura, flujos y modelo): [docs/diagramas.md](docs/diagramas.md)
 
+Diagramas de Git: 
+  - https://gitdiagram.com/oscbohr/InventarioDemo 
+  - https://gitingest.com/oscbohr/InventarioDemo)
+
 ## Comandos
 
 ```bash
