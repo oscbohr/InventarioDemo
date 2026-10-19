@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: h2-server
+  namespace: inventory
+  labels:
+    app: h2-server
+spec:
+  # BD en memoria dentro de este proceso: 1 réplica, y los datos viven mientras el pod no se reinicie.
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: h2-server
+  template:
+    metadata:
+      labels:
+        app: h2-server
+    spec:
+      containers:
+        - name: h2-server
+          image: inventory-h2:2.2.224
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9092
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          readinessProbe:
+            tcpSocket:
+              port: 9092
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 9092
+            initialDelaySeconds: 15
+            periodSeconds: 20

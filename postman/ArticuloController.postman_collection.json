@@ -1,0 +1,1041 @@
+{
+	"info": {
+		"_postman_id": "articulo-controller-collection",
+		"name": "Artículo Controller - Inventory Demo",
+		"description": "Colección de Postman para el API de gestión de artículos del inventario y su depreciación. Incluye ejemplos de respuesta, tests y las rutas de OpenAPI 3 / Swagger UI.\n\nLa configuración de depreciación (porcentaje y método) viene de application.yml; no tiene endpoint.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Artículos",
+			"item": [
+				{
+					"name": "Crear artículo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 201', () => pm.response.to.have.status(201));",
+									"const a = pm.response.json();",
+									"pm.test('Artículo activo con id', () => { pm.expect(a.idArticulo).to.be.a('number'); pm.expect(a.activo).to.eql(true); });",
+									"pm.collectionVariables.set('articuloId', a.idArticulo);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Laptop Dell Latitude\",\n  \"serial\": \"SN-2024-0001\",\n  \"descripcion\": \"Portátil de 14 pulgadas, 16 GB de RAM\",\n  \"fechaCompra\": \"2024-03-01\",\n  \"valorCompra\": 3500.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/articulos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"articulos"
+							]
+						},
+						"description": "Crea un nuevo artículo y calcula automáticamente su depreciación (un registro por año desde la compra hasta el año actual). Guarda el id en la variable `articuloId`."
+					},
+					"response": [
+						{
+							"name": "201 Creado",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nombre\": \"Laptop Dell Latitude\",\n  \"serial\": \"SN-2024-0001\",\n  \"descripcion\": \"Portátil de 14 pulgadas, 16 GB de RAM\",\n  \"fechaCompra\": \"2024-03-01\",\n  \"valorCompra\": 3500.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"idArticulo\": 1,\n  \"nombre\": \"Laptop Dell Latitude\",\n  \"serial\": \"SN-2024-0001\",\n  \"descripcion\": \"Portátil de 14 pulgadas, 16 GB de RAM\",\n  \"fechaCompra\": \"2024-03-01\",\n  \"valorCompra\": 3500.0,\n  \"activo\": true\n}"
+						},
+						{
+							"name": "400 Datos inválidos",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nombre\": \"Laptop Dell Latitude\",\n  \"serial\": \"SN-2024-0001\",\n  \"descripcion\": \"Portátil de 14 pulgadas, 16 GB de RAM\",\n  \"fechaCompra\": \"2024-03-01\",\n  \"valorCompra\": 3500.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"type\": \"about:blank\",\n  \"title\": \"Bad Request\",\n  \"status\": 400,\n  \"detail\": \"Datos inválidos\",\n  \"errores\": {\n    \"valorCompra\": \"debe ser mayor que 0\",\n    \"nombre\": \"no debe estar vacío\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Actualizar artículo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Laptop Dell Latitude Actualizada\",\n  \"serial\": \"SN-2024-0001\",\n  \"descripcion\": \"Portátil de 14 pulgadas, 32 GB de RAM\",\n  \"fechaCompra\": \"2024-03-01\",\n  \"valorCompra\": 4000.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/articulos/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"articulos",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{articuloId}}",
+									"description": "ID del artículo"
+								}
+							]
+						},
+						"description": "Actualiza un artículo existente. Recalcula la depreciación solo si cambian el valor o la fecha de compra. Un artículo dado de baja no se puede actualizar (409)."
+					},
+					"response": [
+						{
+							"name": "200 Actualizado",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nombre\": \"Laptop Dell Latitude Actualizada\",\n  \"serial\": \"SN-2024-0001\",\n  \"descripcion\": \"Portátil de 14 pulgadas, 32 GB de RAM\",\n  \"fechaCompra\": \"2024-03-01\",\n  \"valorCompra\": 4000.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{articuloId}}",
+											"description": "ID del artículo"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"idArticulo\": 1,\n  \"nombre\": \"Laptop Dell Latitude Actualizada\",\n  \"serial\": \"SN-2024-0001\",\n  \"descripcion\": \"Portátil de 14 pulgadas, 32 GB de RAM\",\n  \"fechaCompra\": \"2024-03-01\",\n  \"valorCompra\": 4000.0,\n  \"activo\": true\n}"
+						},
+						{
+							"name": "404 No encontrado",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nombre\": \"Laptop Dell Latitude Actualizada\",\n  \"serial\": \"SN-2024-0001\",\n  \"descripcion\": \"Portátil de 14 pulgadas, 32 GB de RAM\",\n  \"fechaCompra\": \"2024-03-01\",\n  \"valorCompra\": 4000.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{articuloId}}",
+											"description": "ID del artículo"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"type\": \"about:blank\",\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"No existe el artículo con id 99\"\n}"
+						},
+						{
+							"name": "409 Artículo dado de baja",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"nombre\": \"Laptop Dell Latitude Actualizada\",\n  \"serial\": \"SN-2024-0001\",\n  \"descripcion\": \"Portátil de 14 pulgadas, 32 GB de RAM\",\n  \"fechaCompra\": \"2024-03-01\",\n  \"valorCompra\": 4000.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{articuloId}}",
+											"description": "ID del artículo"
+										}
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"type\": \"about:blank\",\n  \"title\": \"Conflict\",\n  \"status\": 409,\n  \"detail\": \"El artículo con id 1 está dado de baja y no se puede modificar\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Dar de baja artículo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 204', () => pm.response.to.have.status(204));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/articulos/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"articulos",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{articuloId}}",
+									"description": "ID del artículo"
+								}
+							]
+						},
+						"description": "Baja lógica: marca el artículo como inactivo y conserva sus depreciaciones."
+					},
+					"response": [
+						{
+							"name": "204 Sin contenido",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{articuloId}}",
+											"description": "ID del artículo"
+										}
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": ""
+						},
+						{
+							"name": "404 No encontrado",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{articuloId}}",
+											"description": "ID del artículo"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"type\": \"about:blank\",\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"No existe el artículo con id 99\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Obtener artículo por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/articulos/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"articulos",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{articuloId}}",
+									"description": "ID del artículo"
+								}
+							]
+						},
+						"description": "Obtiene los datos de un artículo (sin depreciaciones)."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{articuloId}}",
+											"description": "ID del artículo"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"idArticulo\": 1,\n  \"nombre\": \"Laptop Dell Latitude\",\n  \"serial\": \"SN-2024-0001\",\n  \"descripcion\": \"Portátil de 14 pulgadas, 16 GB de RAM\",\n  \"fechaCompra\": \"2024-03-01\",\n  \"valorCompra\": 3500.0,\n  \"activo\": true\n}"
+						},
+						{
+							"name": "404 No encontrado",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{articuloId}}",
+											"description": "ID del artículo"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"type\": \"about:blank\",\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"No existe el artículo con id 99\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Listar todos los artículos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Es un arreglo', () => pm.expect(pm.response.json()).to.be.an('array'));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/articulos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"articulos"
+							]
+						},
+						"description": "Retorna todos los artículos del inventario (sin depreciaciones)."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "[\n  {\n    \"idArticulo\": 1,\n    \"nombre\": \"Laptop Dell Latitude\",\n    \"serial\": \"SN-2024-0001\",\n    \"descripcion\": \"Portátil de 14 pulgadas, 16 GB de RAM\",\n    \"fechaCompra\": \"2024-03-01\",\n    \"valorCompra\": 3500.0,\n    \"activo\": true\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Obtener artículo con sus depreciaciones",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"const a = pm.response.json();",
+									"pm.test('Incluye depreciaciones con vrActualArticulo', () => {",
+									"  pm.expect(a.depreciaciones).to.be.an('array');",
+									"  a.depreciaciones.forEach(d => pm.expect(d).to.have.keys('ano', 'valor', 'porcentaje', 'vrActualArticulo'));",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/articulos/:id/depreciaciones",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"articulos",
+								":id",
+								"depreciaciones"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{articuloId}}",
+									"description": "ID del artículo"
+								}
+							]
+						},
+						"description": "Devuelve el artículo junto con su depreciación anual (ordenada por año). Cada registro incluye `vrActualArticulo`: el valor en libros al inicio de ese año. Antes devolvía solo la lista de depreciaciones."
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos/:id/depreciaciones",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos",
+										":id",
+										"depreciaciones"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{articuloId}}",
+											"description": "ID del artículo"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"idArticulo\": 1,\n  \"nombre\": \"Laptop Dell Latitude\",\n  \"serial\": \"SN-2024-0001\",\n  \"descripcion\": \"Portátil de 14 pulgadas, 16 GB de RAM\",\n  \"fechaCompra\": \"2024-03-01\",\n  \"valorCompra\": 3500.0,\n  \"activo\": true,\n  \"depreciaciones\": [\n    {\n      \"ano\": 2024,\n      \"valor\": 140.0,\n      \"porcentaje\": 4.0,\n      \"vrActualArticulo\": 3500.0\n    },\n    {\n      \"ano\": 2025,\n      \"valor\": 140.0,\n      \"porcentaje\": 4.0,\n      \"vrActualArticulo\": 3360.0\n    },\n    {\n      \"ano\": 2026,\n      \"valor\": 140.0,\n      \"porcentaje\": 4.0,\n      \"vrActualArticulo\": 3220.0\n    }\n  ]\n}"
+						},
+						{
+							"name": "404 No encontrado",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/articulos/:id/depreciaciones",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"articulos",
+										":id",
+										"depreciaciones"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "{{articuloId}}",
+											"description": "ID del artículo"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"type\": \"about:blank\",\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"No existe el artículo con id 99\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Documentación (OpenAPI / Swagger)",
+			"item": [
+				{
+					"name": "Contrato OpenAPI 3 (JSON)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Es OpenAPI 3.x', () => pm.expect(pm.response.json().openapi).to.match(/^3\\./));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}{{apiDocsPath}}",
+							"host": [
+								"{{baseUrl}}{{apiDocsPath}}"
+							]
+						},
+						"description": "Contrato OpenAPI 3 generado por springdoc. La ruta se configura con `springdoc.api-docs.path` (hoy `/v1/api-docs`); puedes importar esta URL en Postman (Import → Link)."
+					},
+					"response": []
+				},
+				{
+					"name": "Swagger UI",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}{{swaggerUiPath}}",
+							"host": [
+								"{{baseUrl}}{{swaggerUiPath}}"
+							]
+						},
+						"description": "Interfaz Swagger UI (`springdoc.swagger-ui.path`, hoy `/swagger-ui.html`). Ábrela en el navegador: {{baseUrl}}{{swaggerUiPath}}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Actuator (métricas)",
+			"item": [
+				{
+					"name": "Health",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('UP', () => pm.expect(pm.response.json().status).to.eql('UP'));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						},
+						"description": "Estado de la aplicación."
+					},
+					"response": []
+				},
+				{
+					"name": "Listar métricas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));",
+									"pm.test('Tiene names', () => pm.expect(pm.response.json().names).to.be.an('array'));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/metrics",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"actuator",
+								"metrics"
+							]
+						},
+						"description": "Lista todos los meters (jvm.*, http.server.requests, hikaricp.*, inventario.*)."
+					},
+					"response": []
+				},
+				{
+					"name": "Artículos creados",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/metrics/inventario.articulos.creados",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"actuator",
+								"metrics",
+								"inventario.articulos.creados"
+							]
+						},
+						"description": "Contador de artículos creados (se cuenta tras el commit). Existe después del primer artículo creado."
+					},
+					"response": []
+				},
+				{
+					"name": "Artículos dados de baja",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/metrics/inventario.articulos.baja",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"actuator",
+								"metrics",
+								"inventario.articulos.baja"
+							]
+						},
+						"description": "Contador de bajas lógicas."
+					},
+					"response": []
+				},
+				{
+					"name": "Tiempo de cálculo de depreciación",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/metrics/inventario.depreciacion.calculo",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"actuator",
+								"metrics",
+								"inventario.depreciacion.calculo"
+							]
+						},
+						"description": "Timer del cálculo de depreciación (COUNT, TOTAL_TIME, MAX)."
+					},
+					"response": []
+				},
+				{
+					"name": "Registros de depreciación generados",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/metrics/inventario.depreciacion.registros",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"actuator",
+								"metrics",
+								"inventario.depreciacion.registros"
+							]
+						},
+						"description": "Cantidad acumulada de registros anuales generados."
+					},
+					"response": []
+				},
+				{
+					"name": "Peticiones HTTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status 200', () => pm.response.to.have.status(200));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/actuator/metrics/http.server.requests",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"actuator",
+								"metrics",
+								"http.server.requests"
+							]
+						},
+						"description": "Métrica automática de peticiones HTTP; filtra con ?tag=uri:/api/articulos."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "articuloId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "apiDocsPath",
+			"value": "/v1/api-docs",
+			"type": "string"
+		},
+		{
+			"key": "swaggerUiPath",
+			"value": "/swagger-ui.html",
+			"type": "string"
+		}
+	]
+}

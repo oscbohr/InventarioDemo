@@ -1,0 +1,32 @@
+# Despliegue local con H2 en modo servidor: docker compose up --build
+services:
+  h2:
+    # Servidor H2 TCP con BD en memoria. La versión debe coincidir con la del cliente de Spring Boot 3.3.6 (2.2.224).
+    build:
+      dockerfile_inline: |
+        FROM eclipse-temurin:21-jre
+        ADD https://repo1.maven.org/maven2/com/h2database/h2/2.2.224/h2-2.2.224.jar /opt/h2/h2.jar
+        RUN useradd --system --uid 1001 h2user && chmod 644 /opt/h2/h2.jar
+        USER h2user
+        EXPOSE 9092
+        ENTRYPOINT ["java", "-cp", "/opt/h2/h2.jar", "org.h2.tools.Server", "-tcp", "-tcpAllowOthers", "-ifNotExists"]
+    image: inventory-h2:2.2.224
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/9092"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    image: inventory-demo:0.0.1
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:h2:tcp://h2:9092/mem:inventario;DB_CLOSE_DELAY=-1
+      SPRING_DATASOURCE_USERNAME: inventario
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      h2:
+        condition: service_healthy

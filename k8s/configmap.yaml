@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inventory-demo-config
+  namespace: inventory
+data:
+  DEPRECIACION_PORCENTAJE: "5"
+  DEPRECIACION_METODO: "SALDO_DECRECIENTE"   # LINEA_RECTA o SALDO_DECRECIENTE
+  SPRING_DATASOURCE_URL: "jdbc:h2:tcp://h2-server:9092/mem:inventario;DB_CLOSE_DELAY=-1"
+  # create-drop borraría la BD compartida al apagar cualquier réplica de la API
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
